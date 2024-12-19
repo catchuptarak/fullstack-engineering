@@ -8,6 +8,7 @@
     display: flex;
     align-items: center;
     position: relative;
+    padding-right: 30px; /* Adding space for the plus button */
   }
   
   /* Adding lines connecting the parent to children */
@@ -25,8 +26,9 @@
   
   /* Connecting line for children nodes */
   .custom-tree .p-tree-node > .p-tree-node-content > .p-tree-node-label {
-    font-size: 1rem;
+    font-size: 1rem; /* Increase font size */
     font-weight: 500;
+    margin-left: 10px; /* Adjust space between icon and text */
   }
   
   .custom-tree .p-tree-node-children {
@@ -34,19 +36,21 @@
   }
   
   .custom-tree .p-tree-node-children > .p-tree-node {
-    margin-top: 4px;
+    margin-top: 8px; /* Adjust spacing between child nodes */
   }
   
   /* Hover effect */
   .custom-tree .p-tree-node-content:hover {
-    background-color: #f3f4f6;
+    background-color: #f3f4f6; /* Light hover effect */
+    cursor: pointer; /* Change cursor to indicate clickable */
   }
   
   /* Increase size of the layout */
   .custom-tree .p-tree {
-    font-size: 1.1rem;
-    max-width: 500px; /* Increase the width of the tree */
-    padding: 10px;
+    font-size: 1.1rem; /* Adjust font size of the entire tree */
+    max-width: 600px; /* Increase width of the tree */
+    padding: 20px; /* Add more padding */
+    background-color: #fff; /* White background for better readability */
   }
   
   /* Tree Icon Styles */
@@ -57,8 +61,47 @@
   
   /* Optional: style the icons */
   .custom-tree .p-tree-node .p-tree-node-content .p-tree-node-label > .p-tree-node-icon {
-    margin-right: 8px;
+    margin-right: 10px; /* More space between icon and label */
+    font-size: 1.2rem; /* Increase icon size */
   }
   
-
-
+  /* Plus Button on Hover */
+  .custom-tree .p-tree-node .group {
+    position: relative;
+    width: 100%;
+  }
+  
+  .custom-tree .p-tree-node .group .group-hover\:block {
+    display: none;
+  }
+  
+  .custom-tree .p-tree-node .group:hover .group-hover\:block {
+    display: block;
+  }
+  
+  /* Customize Plus Button Style */
+  .custom-tree .p-tree-node .group .group-hover\:block button {
+    background-color: #4B5563;
+    color: white;
+    border-radius: 50%;
+    padding: 8px;
+    font-size: 1.4rem; /* Increase font size */
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2); /* Add shadow to button */
+    position: absolute;
+    right: 10px; /* Adjust right distance for better placement */
+    top: 50%; /* Align vertically to the center */
+    transform: translateY(-50%); /* Center the button vertically */
+  }
+  
+  .custom-tree .p-tree-node .group .group-hover\:block button:hover {
+    background-color: #6366F1; /* Hover effect */
+    transform: scale(1.1); /* Slightly enlarge on hover */
+  }
+  
+  /* Increase padding for better spacing */
+  .custom-tree .p-tree-node > .p-tree-node-content {
+    padding: 8px 10px;
+  }
+  

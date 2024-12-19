@@ -5,7 +5,7 @@ import { Tree } from "primereact/tree";
 import { FaUserPlus } from "react-icons/fa";
 import { TiHome, TiUser } from "react-icons/ti";
 import sideBarItems from "@/constants/sideBarItems";
-import "./TreeView.css"
+import "./TreeView.css";
 import 'primereact/resources/themes/lara-light-indigo/theme.css'; // Theme
 import 'primereact/resources/primereact.min.css';  // Core Styles
 import 'primeicons/primeicons.css';  // Icons
@@ -13,6 +13,7 @@ import 'primeicons/primeicons.css';  // Icons
 // Prepare the tree data for PrimeReact's Tree component
 const TreeView = () => {
   const [expandedKeys, setExpandedKeys] = useState<any>({});
+  const [items, setItems] = useState(sideBarItems); // Store items in state to add new ones dynamically
 
   const prepareTreeData = (items: any) => {
     return items.map((item: any) => ({
@@ -23,10 +24,29 @@ const TreeView = () => {
     }));
   };
 
-  const treeData = prepareTreeData(sideBarItems);
+  const treeData = prepareTreeData(items);
 
   const onToggle = (e: any) => {
     setExpandedKeys(e.value); // Update the expanded state when a node is toggled
+  };
+
+  const handleAddItem = (parent: any) => {
+    const newItem = {
+      title: `New Item`,
+      route: `new-item-${Math.random().toString(36).substr(2, 9)}`,
+      Icon: TiUser, // Example icon for new items
+      submenu: [],
+    };
+
+    // Add the new item to the parent node's submenu
+    if (parent) {
+      parent.submenu.push(newItem);
+    } else {
+      setItems([...items, newItem]); // If no parent, add to root
+    }
+
+    // Update the tree to reflect changes
+    setItems([...items]);
   };
 
   return (
@@ -40,6 +60,27 @@ const TreeView = () => {
         selectionKeys={expandedKeys} // Bind selected keys if needed (for single selection)
         onSelect={(e) => console.log("Selected node:", e.value)} // Log selected node
         className="border-none custom-tree" // Apply custom styling
+        nodeTemplate={(node) => (
+          <div className="relative group">
+            <div className="flex items-center">
+              {node.icon && <span className="mr-2">{node.icon}</span>}
+              {node.label}
+            </div>
+
+            {/* Plus button for adding a new item */}
+            <div className="absolute top-0 right-0 hidden group-hover:block">
+              <button
+                className="p-2 bg-blue-500 text-white rounded-full"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleAddItem(node); // Add item when clicked
+                }}
+              >
+                <FaUserPlus />
+              </button>
+            </div>
+          </div>
+        )}
       />
     </div>
   );
