@@ -1,5 +1,6 @@
 import FilterBar from "@/components/shared/FilterBar";
 import SearchEmployee from "@/components/shared/SearchEmployee";
+import TreeView from "@/components/shared/TreeView";
 import EmployeeTable from "@/components/tables/EmployeeTable";
 import { fetchEmployees } from "@/lib/actions/employee.actions";
 
@@ -24,6 +25,8 @@ const Page = async ({}: {}) => {
               </option>
             ))}
           </select>
+
+          <TreeView></TreeView>
         </div>
 
         {/* Placeholder for additional components */}
