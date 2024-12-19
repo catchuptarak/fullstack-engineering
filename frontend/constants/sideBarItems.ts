@@ -2,10 +2,16 @@ import { IconType } from "react-icons";
 import { FaUserPlus } from "react-icons/fa";
 import { TiHome, TiUser } from "react-icons/ti";
 
+interface SubMenuItemType {
+  title: string;
+  route: string;
+}
+
 interface sideBarItemType {
   title: string;
   route: string;
   Icon: IconType;
+  submenu?: SubMenuItemType[];
 }
 
 const sideBarItems: sideBarItemType[] = [
@@ -18,6 +24,12 @@ const sideBarItems: sideBarItemType[] = [
     title: "Systems",
     route: "/systems",
     Icon: TiUser,
+    submenu: [
+      { title: "System Code", route: "/systems/code" },
+      { title: "Properties", route: "/systems/Properties" },
+      { title: "Menus", route: "/systems/menus" },
+      { title: "API List", route: "/systems/apilist" },
+    ],
   },
   {
     title: "Users & Group",
