@@ -5,12 +5,15 @@ import { Tree } from "primereact/tree";
 import { FaUserPlus } from "react-icons/fa";
 import { TiHome, TiUser } from "react-icons/ti";
 import sideBarItems from "@/constants/sideBarItems";
+import "./TreeView.css"
+import 'primereact/resources/themes/lara-light-indigo/theme.css'; // Theme
+import 'primereact/resources/primereact.min.css';  // Core Styles
+import 'primeicons/primeicons.css';  // Icons
 
-// Updated to handle toggle state and child visibility
+// Prepare the tree data for PrimeReact's Tree component
 const TreeView = () => {
   const [expandedKeys, setExpandedKeys] = useState<any>({});
 
-  // Prepare the tree data for PrimeReact's Tree component
   const prepareTreeData = (items: any) => {
     return items.map((item: any) => ({
       label: item.title, // Label for the tree item
@@ -27,7 +30,7 @@ const TreeView = () => {
   };
 
   return (
-    <div className="w-full max-w-xs bg-gray-100 p-4 rounded-md shadow-md">
+    <div className="w-full max-w-xs bg-gray-100 p-6 rounded-md shadow-md">
       <h1 className="text-xl font-semibold mb-4">Menu</h1>
       <Tree
         value={treeData} // Pass the prepared tree data
@@ -36,7 +39,7 @@ const TreeView = () => {
         expandedKeys={expandedKeys} // Bind the expanded state to control which nodes are expanded
         selectionKeys={expandedKeys} // Bind selected keys if needed (for single selection)
         onSelect={(e) => console.log("Selected node:", e.value)} // Log selected node
-        className="border-none"
+        className="border-none custom-tree" // Apply custom styling
       />
     </div>
   );

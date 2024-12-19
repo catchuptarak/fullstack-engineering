@@ -1,0 +1,64 @@
+/* Tree View Styling */
+.custom-tree .p-tree-node {
+    position: relative;
+    padding-left: 20px; /* Space for the connector lines */
+  }
+  
+  .custom-tree .p-tree-node > .p-tree-node-content {
+    display: flex;
+    align-items: center;
+    position: relative;
+  }
+  
+  /* Adding lines connecting the parent to children */
+  .custom-tree .p-tree-node > .p-tree-node-content:before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -12px;
+    width: 12px;
+    height: 100%;
+    border-left: 2px solid #4B5563; /* Line color */
+    border-bottom: 2px solid #4B5563; /* Line color */
+    z-index: -1;
+  }
+  
+  /* Connecting line for children nodes */
+  .custom-tree .p-tree-node > .p-tree-node-content > .p-tree-node-label {
+    font-size: 1rem;
+    font-weight: 500;
+  }
+  
+  .custom-tree .p-tree-node-children {
+    margin-left: 20px;
+  }
+  
+  .custom-tree .p-tree-node-children > .p-tree-node {
+    margin-top: 4px;
+  }
+  
+  /* Hover effect */
+  .custom-tree .p-tree-node-content:hover {
+    background-color: #f3f4f6;
+  }
+  
+  /* Increase size of the layout */
+  .custom-tree .p-tree {
+    font-size: 1.1rem;
+    max-width: 500px; /* Increase the width of the tree */
+    padding: 10px;
+  }
+  
+  /* Tree Icon Styles */
+  .custom-tree .p-tree-node .p-tree-node-content .p-tree-node-label {
+    display: flex;
+    align-items: center;
+  }
+  
+  /* Optional: style the icons */
+  .custom-tree .p-tree-node .p-tree-node-content .p-tree-node-label > .p-tree-node-icon {
+    margin-right: 8px;
+  }
+  
+
+
