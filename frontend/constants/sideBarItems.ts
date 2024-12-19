@@ -15,13 +15,18 @@ const sideBarItems: sideBarItemType[] = [
     Icon: TiHome,
   },
   {
-    title: "Employees",
-    route: "/employees",
+    title: "Systems",
+    route: "/systems",
     Icon: TiUser,
   },
   {
-    title: "New Employee",
-    route: "/new-employee",
+    title: "Users & Group",
+    route: "/users",
+    Icon: FaUserPlus,
+  },
+  {
+    title: "Competition",
+    route: "/competition",
     Icon: FaUserPlus,
   },
 ];

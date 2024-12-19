@@ -7,8 +7,8 @@ import SideBar from "@/components/shared/SideBar";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Employee Dashboard",
-  description: "A Simple CRUD App",
+  title: "Menu Management System",
+  description: "A Simple Menu Management System",
 };
 
 export default function RootLayout({
