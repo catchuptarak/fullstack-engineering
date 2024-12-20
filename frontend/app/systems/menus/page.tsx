@@ -3,6 +3,7 @@
 import FilterBar from "@/components/shared/FilterBar";
 import SearchEmployee from "@/components/shared/SearchEmployee";
 import TreeView from "@/components/shared/TreeView";
+import AddEditForm from "@/components/shared/add-menu/AddMenuitem";
 import AddMenuItem from "@/components/shared/add-menu/AddMenuitem";
 import EmployeeTable from "@/components/tables/EmployeeTable";
 import { fetchEmployees } from "@/lib/actions/employee.actions";
@@ -24,8 +25,14 @@ const Page = async ({}: {}) => {
   const options = ["System Management"];
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
 
-  const handleAddMenuItem = (newMenuItem: MenuItem) => {
-    setMenuItems([...menuItems, newMenuItem]); // Add the new item to the menu array
+  const handleSubmit = (data: {
+    menuId: string;
+    depth: number;
+    parentData: string;
+    name: string;
+  }) => {
+    console.log("Form Submitted:", data);
+    // Handle the submitted data (e.g., send it to an API or update state)
   };
 
 
@@ -53,7 +60,19 @@ const Page = async ({}: {}) => {
 
         {/* Placeholder for additional components */}
         <h1 className="text-head">Menus</h1>
-        <AddMenuItem onSubmit={handleAddMenuItem} parentData={{ label: "Root" }} depth={0} />
+        <div className="p-6">
+      <AddEditForm onSubmit={handleSubmit} />
+      {/* Pass initialData if editing */}
+      {/* <AddEditForm
+        initialData={{
+          menuId: "123",
+          depth: 1,
+          parentData: "Parent Menu",
+          name: "Sample Name",
+        }}
+        onSubmit={handleSubmit}
+      /> */}
+    </div>
       </div>
     </section>
   );

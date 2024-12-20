@@ -1,103 +1,135 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
-interface AddMenuItemProps {
-  onSubmit: (newMenuItem: MenuItem) => void; // Callback to handle form submission
-  parentData: any; // To help with parent data if needed (could be an existing node)
-  depth: number; // Current depth level in the tree (helps with nesting)
+interface AddEditFormProps {
+  initialData?: {
+    menuId: string;
+    depth: number;
+    parentData: string;
+    name: string;
+  };
+  onSubmit: (data: {
+    menuId: string;
+    depth: number;
+    parentData: string;
+    name: string;
+  }) => void;
 }
 
-interface MenuItem {
-  menuid: string;
-  depth: number;
-  parentdata: any;
-  name: string;
-}
+const AddEditForm: React.FC<AddEditFormProps> = ({ initialData, onSubmit }) => {
+  const [formData, setFormData] = useState({
+    menuId: "",
+    depth: 0,
+    parentData: "",
+    name: "",
+  });
 
-const AddMenuItem: React.FC<AddMenuItemProps> = ({ onSubmit, parentData, depth }) => {
-  // Form state management
-  const [menuid, setMenuid] = useState<string>("");
-  const [name, setName] = useState<string>("");
-  const [parentdata, setParentData] = useState<any>(parentData); // Parent data reference
-  const [depthLevel, setDepth] = useState<number>(depth); // Current depth
+  useEffect(() => {
+    if (initialData) {
+      setFormData(initialData);
+    }
+  }, [initialData]);
 
-  // Handle form submission
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: name === "depth" ? parseInt(value) : value, // Convert depth to a number
+    }));
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Construct the new menu item object
-    const newMenuItem: MenuItem = {
-      menuid,
-      depth: depthLevel,
-      parentdata,
-      name,
-    };
-
-    // Submit the new menu item
-    onSubmit(newMenuItem);
-
-    // Reset the form after submission
-    setMenuid("");
-    setName("");
+    onSubmit(formData);
+    setFormData({
+      menuId: "",
+      depth: 0,
+      parentData: "",
+      name: "",
+    }); // Reset form after submission
   };
 
   return (
-    <div className="add-menu-item">
-      <h3>Add New Menu Item</h3>
+    <div className="max-w-md mx-auto bg-white shadow-md p-6 rounded-lg">
+      <h2 className="text-xl font-semibold mb-4">
+        {initialData ? "Edit Item" : "Add Item"}
+      </h2>
       <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label htmlFor="menuid">Menu ID</label>
+        {/* Menu ID */}
+        <div className="mb-4">
+          <label htmlFor="menuId" className="block text-gray-700 font-medium mb-1">
+            Menu ID
+          </label>
           <input
             type="text"
-            id="menuid"
-            value={menuid}
-            onChange={(e) => setMenuid(e.target.value)}
+            id="menuId"
+            name="menuId"
+            value={formData.menuId}
+            onChange={handleChange}
+            className="w-full p-2 border border-gray-300 rounded"
             required
-            placeholder="Enter unique Menu ID"
           />
         </div>
 
-        <div className="form-group">
-          <label htmlFor="name">Menu Name</label>
-          <input
-            type="text"
-            id="name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-            placeholder="Enter Menu Name"
-          />
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="depth">Depth</label>
+        {/* Depth */}
+        <div className="mb-4">
+          <label htmlFor="depth" className="block text-gray-700 font-medium mb-1">
+            Depth
+          </label>
           <input
             type="number"
             id="depth"
-            value={depthLevel}
-            onChange={(e) => setDepth(Number(e.target.value))}
+            name="depth"
+            value={formData.depth}
+            onChange={handleChange}
+            className="w-full p-2 border border-gray-300 rounded"
             required
-            min="0"
           />
         </div>
 
-        <div className="form-group">
-          <label htmlFor="parentdata">Parent Data</label>
+        {/* Parent Data */}
+        <div className="mb-4">
+          <label htmlFor="parentData" className="block text-gray-700 font-medium mb-1">
+            Parent Data
+          </label>
           <input
             type="text"
-            id="parentdata"
-            value={parentdata ? parentdata.label : ""}
-            onChange={(e) => setParentData(e.target.value)} // Handle parent data update
+            id="parentData"
+            name="parentData"
+            value={formData.parentData}
+            onChange={handleChange}
+            className="w-full p-2 border border-gray-300 rounded"
             required
-            placeholder="Enter Parent Data"
           />
         </div>
 
-        <button type="submit" className="btn-submit">Add Menu Item</button>
+        {/* Name */}
+        <div className="mb-4">
+          <label htmlFor="name" className="block text-gray-700 font-medium mb-1">
+            Name
+          </label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+            className="w-full p-2 border border-gray-300 rounded"
+            required
+          />
+        </div>
+
+        {/* Submit Button */}
+        <button
+          type="submit"
+          className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
+        >
+          Submit
+        </button>
       </form>
     </div>
   );
 };
 
-export default AddMenuItem;
+export default AddEditForm;

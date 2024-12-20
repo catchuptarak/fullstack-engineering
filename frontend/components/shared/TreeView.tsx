@@ -6,11 +6,10 @@ import { FaUserPlus } from "react-icons/fa";
 import { TiHome, TiUser } from "react-icons/ti";
 import sideBarItems from "@/constants/sideBarItems";
 import "./TreeView.css";
-import 'primereact/resources/themes/lara-light-indigo/theme.css'; // Theme
-import 'primereact/resources/primereact.min.css';  // Core Styles
-import 'primeicons/primeicons.css';  // Icons
+import "primereact/resources/themes/lara-light-indigo/theme.css"; // Theme
+import "primereact/resources/primereact.min.css"; // Core Styles
+import "primeicons/primeicons.css"; // Icons
 
-// Prepare the tree data for PrimeReact's Tree component
 const TreeView = () => {
   const [expandedKeys, setExpandedKeys] = useState<any>({});
   const [items, setItems] = useState(sideBarItems); // Store items in state to add new ones dynamically
@@ -18,8 +17,7 @@ const TreeView = () => {
   const prepareTreeData = (items: any) => {
     return items.map((item: any) => ({
       label: item.title, // Label for the tree item
-      key: item.route,   // Unique key for each item
-      icon: item.Icon ? <item.Icon className="text-xl" /> : null, // Render icon as JSX
+      key: item.route, // Unique key for each item
       children: item.submenu ? prepareTreeData(item.submenu) : null, // Recursively handle submenus
     }));
   };
@@ -30,23 +28,36 @@ const TreeView = () => {
     setExpandedKeys(e.value); // Update the expanded state when a node is toggled
   };
 
-  const handleAddItem = (parent: any) => {
+  const addItemToTree = (tree: any[], parentKey: string, newItem: any): any[] => {
+    return tree.map((node) => {
+      if (node.key === parentKey) {
+        return {
+          ...node,
+          submenu: [...(node.submenu || []), newItem], // Add new item immutably
+        };
+      }
+      if (node.submenu) {
+        return {
+          ...node,
+          submenu: addItemToTree(node.submenu, parentKey, newItem), // Recursively traverse children
+        };
+      }
+      return node;
+    });
+  };
+
+  const handleAddItem = (parentNode: any) => {
     const newItem = {
       title: `New Item`,
       route: `new-item-${Math.random().toString(36).substr(2, 9)}`,
-      Icon: TiUser, // Example icon for new items
       submenu: [],
     };
 
-    // Add the new item to the parent node's submenu
-    if (parent) {
-      parent.submenu.push(newItem);
+    if (parentNode) {
+      setItems((prevItems) => addItemToTree(prevItems, parentNode.key, newItem));
     } else {
-      setItems([...items, newItem]); // If no parent, add to root
+      setItems((prevItems) => [...prevItems, newItem]); // If no parent, add to root
     }
-
-    // Update the tree to reflect changes
-    setItems([...items]);
   };
 
   return (
@@ -63,7 +74,8 @@ const TreeView = () => {
         nodeTemplate={(node) => (
           <div className="relative group">
             <div className="flex items-center">
-              {node.icon && <span className="mr-2">{node.icon}</span>}
+              {/* Render the icon only in the template */}
+              {node.icon ? <TiUser className="mr-2 text-xl" /> : null}
               {node.label}
             </div>
 
