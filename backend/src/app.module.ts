@@ -1,15 +1,13 @@
 import { Module } from '@nestjs/common';
-import {MongooseModule} from '@nestjs/mongoose';
-
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ProductsModule } from './products/products.module';
-require('dotenv').config();
+import { PrismaModule } from './prisma/prisma.module';
+import { ArticlesModule } from './articles/articles.module';
+import { MenusModule } from './menus/menus.module';
 
-console.log('process.env.MONGODB_URL', process.env.MONGODB_URL);
 
 @Module({
-  imports: [ProductsModule,MongooseModule.forRoot(process.env.MONGODB_URL),],
+  imports: [PrismaModule, ArticlesModule, MenusModule],
   controllers: [AppController],
   providers: [AppService],
 })
