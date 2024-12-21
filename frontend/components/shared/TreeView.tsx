@@ -49,6 +49,31 @@ const TreeView = () => {
 
   const onToggle = (e: any) => setExpandedKeys(e.value);
 
+  const handleCancel = () => {
+    // Reset any modal or form visibility
+    setSelectedNode(null); // Close the form without changes
+    setSelectedNodeId(null); // Reset parent ID on cancel
+    console.log("Cancel action triggered, form reset.");
+  };
+
+  const handleDelete = (node: Node) => {
+    const deleteNodeAndChildren = (
+      nodes: Node[],
+      keyToDelete: string
+    ): Node[] => {
+      return nodes
+        .filter((node) => node.key !== keyToDelete) // Remove the node with the matching key
+        .map((node) => ({
+          ...node,
+          children: deleteNodeAndChildren(node.children || [], keyToDelete), // Recursively remove children
+        }));
+    };
+
+    setTreeData((prev) => deleteNodeAndChildren(prev, node.key));
+    setSelectedNode(null); // Clear selected node after deletion
+    setSelectedNodeId(null); // Reset selected node ID
+  };
+
   const handleAddItem = (node: Node) => {
     console.log("Adding new node to:", node);
     setSelectedNodeId(node.key); //
@@ -83,12 +108,6 @@ const TreeView = () => {
     });
 
     fetchTreeData(); // Refresh the tree data after adding or editing a node
-  };
-
-  const handleCancel = () => {
-    setSelectedNode(null); // Close the form without changes
-    setSelectedNodeId(null); // Reset parent ID on cancel
-    setMode("add"); // Reset mode to 'add'
   };
 
   return (
@@ -138,9 +157,10 @@ const TreeView = () => {
           selectedNodeId={selectedNodeId}
           onSubmit={handleSubmitNode}
           onCancel={handleCancel}
+          onDelete={handleDelete}
           mode={mode}
-          triggerKey={triggerKey} 
-          setSelectedNode = {setSelectedNode}
+          triggerKey={triggerKey}
+          setSelectedNode={setSelectedNode}
         />
       </div>
     </div>

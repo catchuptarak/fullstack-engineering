@@ -233,9 +233,59 @@ const AddEditNode: React.FC<AddEditNodeProps> = ({
     }
   };
 
-  const handleDelete = () => {
-    if (selectedNode) onDelete(selectedNode.key);
+
+
+  const handleDelete = async () => {
+    console.log(`handleDelete triggered for selectedNode: ${JSON.stringify(selectedNode)}`);
+  
+    if (!selectedNode) {
+      alert("No node selected to delete.");
+      return;
+    }
+  
+    const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+    const apiUrl = `${apiBaseUrl}/menu/${selectedNode.key}`;
+  
+    const confirmDelete = window.confirm(
+      `Are you sure you want to delete the node: ${selectedNode.label}?`
+    );
+  
+    if (!confirmDelete) return;
+  
+    try {
+      const response = await fetch(apiUrl, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error("Failed to delete the node.");
+      }
+  
+      alert("Node deleted successfully.");
+      onDelete(selectedNode.key); // Notify parent component to remove node from tree
+    } catch (error) {
+      console.error("Error deleting node:", error);
+      alert("An error occurred while trying to delete the node.");
+    }
   };
+
+  const handleCancel = () => {
+    // Reset the form data to its initial state
+    setFormData({
+      key: "",
+      label: "",
+      depth: 0,
+      parent: "",
+      parentName: "",
+    });
+  
+    // Trigger the parent component's cancel callback
+    onCancel();
+  };
+  
 
   return (
     <div className="p-6 bg-white rounded-md shadow-md mt-4 w-96 mx-auto">
@@ -319,7 +369,7 @@ const AddEditNode: React.FC<AddEditNodeProps> = ({
           )}
           <button
             type="button"
-            onClick={onCancel}
+            onClick={handleCancel}
             className="bg-gray-500 text-white p-3 rounded text-lg"
           >
             Cancel
