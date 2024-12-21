@@ -36,7 +36,7 @@ const TreeView = () => {
       key: item.id,
       label: item.name,
       depth: item.depth || 0,
-      parent: item.parent || "",
+      parent: item.parentId || "",
       children: item.children ? prepareTreeData(item.children) : [],
     }));
 

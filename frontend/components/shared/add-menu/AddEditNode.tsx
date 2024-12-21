@@ -1,17 +1,16 @@
 import React, { useState, useEffect } from "react";
 
-// Interface for node data
 interface Node {
   key: string;
   label: string;
   depth: number;
-  parent: string; // Parent Node Name
+  parent: string; // Parent Node ID
   children?: Node[];
 }
 
 interface AddEditNodeProps {
   selectedNode: Node | null; // The node to edit, or null for adding a new node
-  treeData: Node[]; // Full tree data to look up the parent node by name
+  treeData: Node[]; // Full tree data to look up the parent node by ID
   onSubmit: (node: Node) => void; // Callback to handle submission
   onCancel: () => void; // Callback to cancel the form
   onDelete: (key: string) => void; // Callback to handle node deletion
@@ -25,98 +24,70 @@ const AddEditNode: React.FC<AddEditNodeProps> = ({
   onDelete,
 }) => {
   const [formData, setFormData] = useState({
-    key: selectedNode ? selectedNode.key : "",
-    label: selectedNode ? selectedNode.label : "",
-    parent: selectedNode ? selectedNode.parent : "",
-    depth: selectedNode ? selectedNode.depth : 0,
+    key: "",
+    label: "",
+    depth: 0,
+    parent: "",
+    parentName: "", // New field to display parent node name
   });
-
-  const [selectedNodeState, setSelectedNodeState] = useState<Node | null>(selectedNode);
 
   useEffect(() => {
     if (selectedNode) {
+      console.log('selectedNode', selectedNode);
+      // Edit mode: Populate form with selected node's data
+      const parentNode = treeData.find((node) => node.key === selectedNode.parent); // Find parent by ID
       setFormData({
         key: selectedNode.key,
         label: selectedNode.label,
-        parent: selectedNode.parent,
         depth: selectedNode.depth,
+        parent: selectedNode.parent,
+        parentName: parentNode ? parentNode.label : "", // Use parent's label or empty string if no parent
       });
-      setSelectedNodeState(selectedNode); // Update internal state when selectedNode changes
+    } else {
+      // Add mode: Reset the form with default values
+      setFormData({
+        key: "",
+        label: "",
+        depth: 0,
+        parent: "",
+        parentName: "", // Default to an empty string
+      });
     }
-  }, [selectedNode]);
+  }, [selectedNode, treeData]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: name === "depth" ? parseInt(value) : value,
+      [name]: value,
     }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     if (formData.label.trim() === "") return;
 
-    const parentNode = treeData.find((node) => node.label === formData.parent);
-    if (!parentNode && formData.parent !== "") {
+    const parentNode = treeData.find((node) => node.label === formData.parentName);
+    if (!parentNode && formData.parentName !== "0") {
       alert("Parent node not found");
       return;
     }
 
     const newNode: Node = {
-      key: selectedNode ? selectedNode.key : formData.label, // Use label as key if adding a new node
+      key: selectedNode ? selectedNode.key : formData.label,
       label: formData.label,
-      depth: selectedNode ? formData.depth : 0, // Depth defaults to 0 for new nodes
-      parent: parentNode ? parentNode.label : "",
+      depth: selectedNode
+        ? formData.depth
+        : parentNode
+        ? parentNode.depth + 1
+        : 0, // Depth is 0 if no parent exists
+      parent: parentNode ? parentNode.key : "", // Store Parent Node ID
       children: selectedNode?.children || [],
     };
 
-    const apiBaseUrl = process.env.REACT_APP_API_BASE_URL; // Access the base URL from the environment
-
     try {
-      if (selectedNode) {
-        // Edit mode: Call PUT API to update the existing node
-        const response = await fetch(`${apiBaseUrl}/menu/${selectedNode.key}`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            name: formData.label,
-            parentId: parentNode ? parentNode.key : null,
-            depth: formData.depth,
-          }),
-        });
-
-        if (!response.ok) {
-          throw new Error("Failed to update node");
-        }
-
-        alert("Node updated successfully");
-      } else {
-        // Add mode: Call POST API to add a new node
-        const response = await fetch(`${apiBaseUrl}/menu/add`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            name: formData.label,
-            parentId: parentNode ? parentNode.key : null,
-          }),
-        });
-
-        if (!response.ok) {
-          throw new Error("Failed to add new node");
-        }
-
-        alert("New node added successfully");
-      }
-
-      // Reset the form after submission
-      setFormData({ key: "", label: "", parent: "", depth: 0 });
-      setSelectedNodeState(null); // Reset selected node state internally
+      alert(selectedNode ? "Node updated successfully" : "New node added successfully");
+      onSubmit(newNode);
     } catch (error) {
       console.error(error);
       alert("An error occurred while submitting the form");
@@ -124,18 +95,16 @@ const AddEditNode: React.FC<AddEditNodeProps> = ({
   };
 
   const handleDelete = () => {
-    if (selectedNodeState) {
-      onDelete(selectedNodeState.key); // Trigger delete callback with node key
-    }
+    if (selectedNode) onDelete(selectedNode.key);
   };
 
   return (
     <div className="p-6 bg-white rounded-md shadow-md mt-4 w-96 mx-auto">
       <h2 className="text-xl font-semibold mb-6">
-        {selectedNodeState ? "Edit Node" : "Add Node"}
+        {selectedNode ? "Edit Node" : "Add Node"}
       </h2>
       <form onSubmit={handleSubmit}>
-        {selectedNodeState && (
+        {selectedNode && (
           <div className="mb-6">
             <label htmlFor="key" className="block text-gray-700 text-lg mb-2">
               Node ID
@@ -147,7 +116,7 @@ const AddEditNode: React.FC<AddEditNodeProps> = ({
               value={formData.key}
               onChange={handleChange}
               className="w-full p-3 border border-gray-300 rounded text-lg"
-              readOnly // Node ID should not be editable
+              readOnly
             />
           </div>
         )}
@@ -168,20 +137,20 @@ const AddEditNode: React.FC<AddEditNodeProps> = ({
         </div>
 
         <div className="mb-6">
-          <label htmlFor="parent" className="block text-gray-700 text-lg mb-2">
+          <label htmlFor="parentName" className="block text-gray-700 text-lg mb-2">
             Parent Node Name
           </label>
           <input
             type="text"
-            id="parent"
-            name="parent"
-            value={formData.parent}
+            id="parentName"
+            name="parentName"
+            value={formData.parentName}
             onChange={handleChange}
             className="w-full p-3 border border-gray-300 rounded text-lg"
           />
         </div>
 
-        {selectedNodeState && (
+        {selectedNode && (
           <div className="mb-6">
             <label htmlFor="depth" className="block text-gray-700 text-lg mb-2">
               Depth
@@ -199,7 +168,7 @@ const AddEditNode: React.FC<AddEditNodeProps> = ({
         )}
 
         <div className="flex justify-between">
-          {selectedNodeState && (
+          {selectedNode && (
             <button
               type="button"
               onClick={handleDelete}
@@ -208,7 +177,6 @@ const AddEditNode: React.FC<AddEditNodeProps> = ({
               Delete
             </button>
           )}
-
           <button
             type="button"
             onClick={onCancel}
@@ -216,9 +184,8 @@ const AddEditNode: React.FC<AddEditNodeProps> = ({
           >
             Cancel
           </button>
-
           <button type="submit" className="bg-blue-500 text-white p-3 rounded text-lg">
-            {selectedNodeState ? "Update" : "Add"}
+            {selectedNode ? "Update" : "Add"}
           </button>
         </div>
       </form>
