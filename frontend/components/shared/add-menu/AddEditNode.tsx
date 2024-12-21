@@ -5,6 +5,7 @@ interface Node {
   label: string;
   depth: number;
   parent: string; // Parent Node ID
+  parentId: number; // Parent Node ID
   children?: Node[];
 }
 
@@ -44,7 +45,7 @@ const AddEditNode: React.FC<AddEditNodeProps> = ({
       console.log("selectedNode.parent", selectedNode.parent);
 
       // Find the parent node by ID in treeData
-      const parentNode = treeData.find((node) => node.key === selectedNode.parent);
+      const parentNode = treeData.find((node) => selectedNode.parent ? node.key === selectedNode.parent : Number(node.key) == selectedNode.parentId);
       console.log("parentNode", parentNode);
 
       // Edit mode: Populate form with selected node's data
@@ -81,7 +82,7 @@ const AddEditNode: React.FC<AddEditNodeProps> = ({
     if (formData.label.trim() === "") return;
 
     // Find the parent node from treeData based on parentName
-    const parentNode = treeData.find((node) => node.label === formData.parentName);
+    const parentNode = treeData.find((node) => node.label === formData.parentName) || treeData.find((node) => node.key === selectedNode?.key);
     if (!parentNode && formData.parentName !== "0") {
       alert("Parent node not found");
       return;
@@ -128,7 +129,15 @@ const AddEditNode: React.FC<AddEditNodeProps> = ({
 
         const updatedNode = await response.json();
         alert("Node updated successfully");
-        onSubmit(updatedNode); // Update the tree with the new data
+
+        // Ensure the updated node has the correct parent name
+        const updatedParentNode = treeData.find((node) => node.key === updatedNode.parent);
+        const updatedNodeWithParent = {
+          ...updatedNode,
+          parentName: updatedParentNode ? updatedParentNode.label : "",
+        };
+
+        onSubmit(updatedNodeWithParent); // Update the tree with the new data
       } else {
         // If selectedNode doesn't exist, we are adding a new node, so use POST
         apiUrl = `${apiBaseUrl}/menu`;
@@ -244,8 +253,11 @@ const AddEditNode: React.FC<AddEditNodeProps> = ({
           >
             Cancel
           </button>
-          <button type="submit" className="bg-blue-500 text-white p-3 rounded text-lg">
-            {selectedNode ? "Update" : "Add"}
+          <button
+            type="submit"
+            className="bg-blue-500 text-white p-3 rounded text-lg"
+          >
+            {selectedNode ? "Update" : "Add"} Node
           </button>
         </div>
       </form>
