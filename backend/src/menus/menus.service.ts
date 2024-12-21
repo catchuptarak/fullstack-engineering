@@ -53,17 +53,35 @@ export class MenuService {
     });
   }
 
-  async getMenuHierarchy() {
-    return this.prisma.menu.findMany({
-      where: { parentId: null }, // Start with root nodes
-      include: {
+  async getMenuHierarchy(depth: number = 20) {
+    // Validate depth parameter to ensure it's a non-negative integer
+    if (depth < 0 || !Number.isInteger(depth)) {
+      throw new Error("Invalid depth value. Depth must be a non-negative integer.");
+    }
+  
+    // Recursive function to include children based on depth
+    const includeChildren = (currentDepth: number) => {
+      if (currentDepth > depth) {
+        return {}; // Stop recursion if we've reached the specified depth
+      }
+  
+      return {
         children: {
-          include: {
-            children: true, // You can nest this as needed for deeper hierarchies
-          },
+          include: includeChildren(currentDepth + 1), // Recurse for next level
         },
-      },
-    });
+      };
+    };
+  
+    try {
+      // Fetch root nodes and recursively include children based on the depth
+      return this.prisma.menu.findMany({
+        where: { parentId: null }, // Root nodes where parentId is null
+        include: includeChildren(1), // Start recursion from depth 1
+      });
+    } catch (error) {
+      console.error("Error fetching menu hierarchy:", error);
+      throw new Error("Failed to fetch menu hierarchy");
+    }
   }
 }
 
