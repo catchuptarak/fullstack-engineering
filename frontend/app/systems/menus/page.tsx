@@ -3,8 +3,8 @@
 import FilterBar from "@/components/shared/FilterBar";
 import SearchEmployee from "@/components/shared/SearchEmployee";
 import TreeView from "@/components/shared/TreeView";
-import AddEditForm from "@/components/shared/add-menu/AddMenuitem";
-import AddMenuItem from "@/components/shared/add-menu/AddMenuitem";
+import AddEditForm from "@/components/shared/add-menu/AddEditNode";
+
 import EmployeeTable from "@/components/tables/EmployeeTable";
 import { fetchEmployees } from "@/lib/actions/employee.actions";
 import { useState } from "react";
@@ -61,17 +61,8 @@ const Page = async ({}: {}) => {
         {/* Placeholder for additional components */}
         <h1 className="text-head">Menus</h1>
         <div className="p-6">
-      <AddEditForm onSubmit={handleSubmit} />
-      {/* Pass initialData if editing */}
-      {/* <AddEditForm
-        initialData={{
-          menuId: "123",
-          depth: 1,
-          parentData: "Parent Menu",
-          name: "Sample Name",
-        }}
-        onSubmit={handleSubmit}
-      /> */}
+  
+   
     </div>
       </div>
     </section>

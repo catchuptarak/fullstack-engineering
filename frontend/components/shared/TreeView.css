@@ -1,23 +1,17 @@
 /* General container styling */
-.custom-tree {
+.tree-view-container {
+    padding: 20px;
+    background-color: #f8f9fa; /* Light gray background */
+    border-radius: 8px;
+    border: 1px solid #ddd; /* Border around the tree */
+  }
+  
+  /* Custom Tree styling */
+  .custom-tree {
     font-family: 'Arial', sans-serif;
     background-color: #f8f9fa; /* Light gray background */
-    border: 1px solid #ddd; /* Border around the tree */
     border-radius: 8px;
     padding: 10px;
-  }
-  
-  /* Tree node styling */
-  .p-treenode {
-    margin-bottom: 8px;
-    padding: 5px 10px;
-    transition: background-color 0.3s ease, box-shadow 0.3s ease;
-    border-radius: 6px;
-  }
-  
-  .p-treenode:hover {
-    background-color: #e9ecef; /* Light hover effect */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
   }
   
   /* Styling for tree node labels */
@@ -28,37 +22,41 @@
     font-weight: 500;
   }
   
-  /* Custom styling for icons */
-  .p-treenode-content .text-blue-500 {
-    color: #007bff; /* Bootstrap blue */
-    margin-right: 8px;
-    font-size: 18px;
+  /* Add/Edit button styling */
+  .add-button,
+  .edit-button {
+    display: none;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
   }
   
-  /* Add button styling */
-  .group:hover .p-treenode .p-treenode-label button {
+  .group:hover .add-button,
+  .group:hover .edit-button {
     display: inline-block;
   }
   
-  .group button {
-    display: none;
-    position: absolute;
-    right: 10px;
-    top: 0;
-    transform: translateY(-50%);
-    background-color: #007bff;
-    color: #fff;
-    border: none;
+  /* Add button styling */
+  .add-button {
+    right: 2px;
+  }
+  
+  .edit-button {
+    right: 12px;
+  }
+  
+  /* Button common styles */
+  button {
+    padding: 10px;
     border-radius: 50%;
-    padding: 5px;
-    width: 24px;
-    height: 24px;
     cursor: pointer;
     transition: background-color 0.3s ease;
   }
   
-  .group button:hover {
+  button:hover {
     background-color: #0056b3; /* Darker blue */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transform: scale(1.1); /* Zoom effect */
   }
   
   /* Indentation for children nodes */
@@ -78,5 +76,17 @@
     .custom-tree {
       font-size: 12px;
     }
+  }
+  
+  /* Tree node styling */
+  .custom-tree .p-treenode {
+    margin-bottom: 8px;
+    padding: 5px 10px;
+    border-radius: 6px;
+    transition: background-color 0.2s ease;
+  }
+  
+  .custom-tree .p-treenode:hover {
+    background-color: #f1f5f9; /* Light gray background on hover */
   }
   
