@@ -49,6 +49,28 @@ const TreeView = () => {
 
   const onToggle = (e: any) => setExpandedKeys(e.value);
 
+  const expandAllNodes = () => {
+    const allExpandedKeys = getAllNodeKeys(treeData);
+    const expanded = allExpandedKeys.reduce((acc, key) => {
+      acc[key] = true;
+      return acc;
+    }, {});
+    setExpandedKeys(expanded);
+  };
+
+  const collapseAllNodes = () => setExpandedKeys({});
+
+  const getAllNodeKeys = (nodes: Node[]): string[] => {
+    let keys: string[] = [];
+    nodes.forEach((node) => {
+      keys.push(node.key);
+      if (node.children) {
+        keys = keys.concat(getAllNodeKeys(node.children));
+      }
+    });
+    return keys;
+  };
+
   const handleCancel = () => {
     // Reset any modal or form visibility
     setSelectedNode(null); // Close the form without changes
@@ -115,6 +137,20 @@ const TreeView = () => {
       {/* Tree View Section */}
       <div className="tree-view-container w-2/3 pr-4">
         <h1 className="text-xl font-semibold mb-4">Menu</h1>
+        <div className="flex gap-4 mb-4">
+          <button
+            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+            onClick={expandAllNodes}
+          >
+            Expand All
+          </button>
+          <button
+            className="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600"
+            onClick={collapseAllNodes}
+          >
+            Collapse All
+          </button>
+        </div>
         <Tree
           value={treeData}
           selectionMode="single"

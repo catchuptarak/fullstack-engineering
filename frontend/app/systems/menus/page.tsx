@@ -65,21 +65,7 @@ const Page = async ({}: {}) => {
             ))}
           </select>
 
-          {/* Expand/Collapse Buttons */}
-          <div className="flex space-x-4 mt-4">
-            <button
-              onClick={handleExpandAll}
-              className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
-            >
-              Expand All
-            </button>
-            <button
-              onClick={handleCollapseAll}
-              className="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600"
-            >
-              Collapse All
-            </button>
-          </div>
+         
 
           <div className="mt-6 mb-10">
             <TreeView onExpandAll={handleExpandAll} onCollapseAll={handleCollapseAll} />
