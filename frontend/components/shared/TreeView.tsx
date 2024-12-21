@@ -18,6 +18,7 @@ const TreeView = () => {
   const [expandedKeys, setExpandedKeys] = useState<any>({});
   const [treeData, setTreeData] = useState<Node[]>([]);
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
+  const [mode, setMode] = useState<'add' | 'edit'>('add');
 
   const fetchTreeData = async () => {
     try {
@@ -44,19 +45,28 @@ const TreeView = () => {
     fetchTreeData();
   }, []);
 
+  
+
   const onToggle = (e: any) => setExpandedKeys(e.value);
 
   const handleAddItem = (node: Node) => {
     console.log("Adding new node to:", node);
-    setSelectedNode(null); // Reset selected node before adding new one
+    setSelectedNode(null); // Reset selected node to ensure no pre-selected node
+    //setMode('add'); // Set mode to 'add' for adding a new item
+    setTimeout(() => {
+        setMode('add'); // Set mode to 'add' after the delay
+      }, 1000); // Delay for 1 second (1000 milliseconds)
+    
   };
 
   const handleEditNode = (node: Node) => {
     console.log("Editing node:", node);
     setSelectedNode(node); // Set the selected node for editing
+    setMode('edit'); // Set mode to 'edit' for editing an existing node
   };
 
   const handleSubmitNode = (node: Node) => {
+    // Update the tree data with the new or edited node
     setTreeData((prev) => {
       if (selectedNode) {
         return prev.map((n) =>
@@ -66,11 +76,17 @@ const TreeView = () => {
         return [...prev, node];
       }
     });
-    setSelectedNode(null); // Reset selected node after submission
+  
+    // Reset the selected node after submission
+    setSelectedNode(node);
+  
+    // Fetch the updated tree data from the server after successful submission
+    fetchTreeData(); // Refresh the tree data after adding or editing a node
   };
 
   const handleCancel = () => {
     setSelectedNode(null); // Close the form without changes
+    setMode('add'); // Reset mode to 'add' if the action is cancelled
   };
 
   return (
@@ -85,52 +101,47 @@ const TreeView = () => {
           expandedKeys={expandedKeys}
           className="custom-tree"
           nodeTemplate={(node) => (
-       
-
             <div className="node-content relative group p-2 flex items-center justify-between">
-  <span className="mr-2">{node.label}</span>
+              <span className="mr-2">{node.label}</span>
 
-  {/* Buttons container */}
-  <div className="button-container flex items-center gap-4 ml-auto opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-    {/* Plus button for adding node */}
-    <button
-      className="p-2 bg-blue-500 text-white rounded-full shadow-lg hover:bg-blue-600 transition"
-      onClick={(e) => {
-        e.stopPropagation();
-        handleAddItem(node); // Handle adding items
-      }}
-    >
-      <FaUserPlus />
-    </button>
+              {/* Buttons container */}
+              <div className="button-container flex items-center gap-4 ml-auto opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                {/* Plus button for adding node */}
+                <button
+                  className="p-2 bg-blue-500 text-white rounded-full shadow-lg hover:bg-blue-600 transition"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleAddItem(node); // Handle adding items
+                  }}
+                >
+                  <FaUserPlus />
+                </button>
 
-    {/* Edit button for modifying the current node */}
-    <button
-      className="p-2 bg-green-500 text-white rounded-full shadow-lg hover:bg-green-600 transition"
-      onClick={(e) => {
-        e.stopPropagation();
-        handleEditNode(node); // Handle editing node
-      }}
-    >
-      <FaEdit />
-    </button>
-  </div>
-</div>
-
-          
-          
-          
+                {/* Edit button for modifying the current node */}
+                <button
+                  className="p-2 bg-green-500 text-white rounded-full shadow-lg hover:bg-green-600 transition"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleEditNode(node); // Handle editing node
+                  }}
+                >
+                  <FaEdit />
+                </button>
+              </div>
+            </div>
           )}
         />
       </div>
 
       {/* Add/Edit Node Section */}
       <div className="add-edit-section w-1/3">
-        {selectedNode !== null ? (
+        {selectedNode ? (
           <AddEditNode
             selectedNode={selectedNode} // Pass the selected node data for editing
             treeData={treeData}
             onSubmit={handleSubmitNode}
             onCancel={handleCancel}
+            mode={mode}
           />
         ) : (
           <AddEditNode
@@ -138,6 +149,7 @@ const TreeView = () => {
             treeData={treeData}
             onSubmit={handleSubmitNode}
             onCancel={handleCancel}
+            mode={mode}
           />
         )}
       </div>
