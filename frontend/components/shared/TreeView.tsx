@@ -139,7 +139,8 @@ const TreeView = () => {
           onSubmit={handleSubmitNode}
           onCancel={handleCancel}
           mode={mode}
-          triggerKey={triggerKey} // Pass triggerKey to AddEditNode
+          triggerKey={triggerKey} 
+          setSelectedNode = {setSelectedNode}
         />
       </div>
     </div>
