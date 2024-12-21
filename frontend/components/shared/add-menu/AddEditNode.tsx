@@ -45,7 +45,11 @@ const AddEditNode: React.FC<AddEditNodeProps> = ({
       console.log("selectedNode.parent", selectedNode.parent);
 
       // Find the parent node by ID in treeData
-      const parentNode = treeData.find((node) => selectedNode.parent ? node.key === selectedNode.parent : Number(node.key) == selectedNode.parentId);
+      const parentNode = treeData.find((node) =>
+        selectedNode.parent
+          ? node.key === selectedNode.parent
+          : Number(node.key) == selectedNode.parentId
+      );
       console.log("parentNode", parentNode);
 
       // Edit mode: Populate form with selected node's data
@@ -82,7 +86,9 @@ const AddEditNode: React.FC<AddEditNodeProps> = ({
     if (formData.label.trim() === "") return;
 
     // Find the parent node from treeData based on parentName
-    const parentNode = treeData.find((node) => node.label === formData.parentName) || treeData.find((node) => node.key === selectedNode?.key);
+    const parentNode =
+      treeData.find((node) => node.label === formData.parentName) ||
+      treeData.find((node) => node.key === selectedNode?.key);
     if (!parentNode && formData.parentName !== "0") {
       alert("Parent node not found");
       return;
@@ -131,7 +137,9 @@ const AddEditNode: React.FC<AddEditNodeProps> = ({
         alert("Node updated successfully");
 
         // Ensure the updated node has the correct parent name
-        const updatedParentNode = treeData.find((node) => node.key === updatedNode.parent);
+        const updatedParentNode = treeData.find(
+          (node) => node.key === updatedNode.parent
+        );
         const updatedNodeWithParent = {
           ...updatedNode,
           parentName: updatedParentNode ? updatedParentNode.label : "",
@@ -183,9 +191,8 @@ const AddEditNode: React.FC<AddEditNodeProps> = ({
               id="key"
               name="key"
               value={formData.key}
-              onChange={handleChange}
-              className="w-full p-3 border border-gray-300 rounded text-lg"
-              readOnly
+              className="w-full p-3 bg-gray-100 text-gray-500 border border-gray-300 rounded text-lg cursor-not-allowed"
+              readOnly // Makes Node ID non-editable
             />
           </div>
         )}
@@ -206,7 +213,10 @@ const AddEditNode: React.FC<AddEditNodeProps> = ({
         </div>
 
         <div className="mb-6">
-          <label htmlFor="parentName" className="block text-gray-700 text-lg mb-2">
+          <label
+            htmlFor="parentName"
+            className="block text-gray-700 text-lg mb-2"
+          >
             Parent Node Name
           </label>
           <input
@@ -214,8 +224,8 @@ const AddEditNode: React.FC<AddEditNodeProps> = ({
             id="parentName"
             name="parentName"
             value={formData.parentName}
-            onChange={handleChange}
-            className="w-full p-3 border border-gray-300 rounded text-lg"
+            className="w-full p-3 bg-gray-100 text-gray-500 border border-gray-300 rounded text-lg cursor-not-allowed"
+            readOnly // Makes Parent Node Name non-editable
           />
         </div>
 
@@ -229,9 +239,8 @@ const AddEditNode: React.FC<AddEditNodeProps> = ({
               id="depth"
               name="depth"
               value={formData.depth}
-              onChange={handleChange}
-              className="w-full p-3 border border-gray-300 rounded text-lg"
-              required
+              className="w-full p-3 bg-gray-100 text-gray-500 border border-gray-300 rounded text-lg cursor-not-allowed"
+              readOnly // Makes Depth non-editable
             />
           </div>
         )}
