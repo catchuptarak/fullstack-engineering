@@ -18,7 +18,7 @@ const TreeView = () => {
   const [expandedKeys, setExpandedKeys] = useState<any>({});
   const [treeData, setTreeData] = useState<Node[]>([]);
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
-  const [selectedParentId, setSelectedParentId] = useState<string | null>(null);
+  const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [mode, setMode] = useState<"add" | "edit">("add");
   const [triggerKey, setTriggerKey] = useState<string | null>(null); // New state for trigger key
 
@@ -51,7 +51,7 @@ const TreeView = () => {
 
   const handleAddItem = (node: Node) => {
     console.log("Adding new node to:", node);
-    setSelectedParentId(node.key); // Set the selected parent ID
+    setSelectedNodeId(node.key); //
     setSelectedNode(null); // Reset selected node to ensure no pre-selected node
     setMode("add"); // Set mode to 'add'
     setTriggerKey(Date.now().toString()); // Update trigger key with a unique value
@@ -59,7 +59,7 @@ const TreeView = () => {
 
   const handleEditNode = (node: Node) => {
     console.log("Editing node:", node);
-    setSelectedParentId(null); // Reset selected parent ID since it's an edit operation
+    setSelectedNodeId(null); // Reset selected parent ID since it's an edit operation
     setSelectedNode(node); // Set the selected node for editing
     setMode("edit"); // Set mode to 'edit'
     setTriggerKey(Date.now().toString()); // Update trigger key with a unique value
@@ -76,7 +76,7 @@ const TreeView = () => {
           ...prev,
           {
             ...node,
-            parent: selectedParentId || "", // Attach selectedParentId for the new node
+            parent: selectedNodeId || "", // Attach selectedParentId for the new node
           },
         ];
       }
@@ -87,7 +87,7 @@ const TreeView = () => {
 
   const handleCancel = () => {
     setSelectedNode(null); // Close the form without changes
-    setSelectedParentId(null); // Reset parent ID on cancel
+    setSelectedNodeId(null); // Reset parent ID on cancel
     setMode("add"); // Reset mode to 'add'
   };
 
@@ -135,7 +135,7 @@ const TreeView = () => {
         <AddEditNode
           selectedNode={selectedNode}
           treeData={treeData}
-          selectedParentId={selectedParentId}
+          selectedNodeId={selectedNodeId}
           onSubmit={handleSubmitNode}
           onCancel={handleCancel}
           mode={mode}

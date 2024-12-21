@@ -12,7 +12,7 @@ interface Node {
 interface AddEditNodeProps {
   selectedNode: Node | null; // The node to edit, or null for adding a new node
   treeData: Node[]; // Full tree data to look up the parent node by ID,
-  selectedParentId: number;
+  selectedNodeId: number;
   onSubmit: (node: Node) => void; // Callback to handle submission
   onCancel: () => void; // Callback to cancel the form
   onDelete: (key: string) => void; // Callback to handle node deletion
@@ -24,7 +24,7 @@ interface AddEditNodeProps {
 const AddEditNode: React.FC<AddEditNodeProps> = ({
   selectedNode,
   treeData,
-  selectedParentId,
+  selectedNodeId,
   onSubmit,
   onCancel,
   onDelete,
@@ -45,19 +45,18 @@ const AddEditNode: React.FC<AddEditNodeProps> = ({
   useEffect(() => {
     console.log("useEffect");
     console.log("AddEditNode useEffect selectedNode ", selectedNode);
-    console.log("selectedParentId", selectedParentId);
+    console.log("selectedNodeId", selectedNodeId);
 
     if (triggerKey) {
       if (selectedNode) {
         // Check if selectedNode.parent is valid
-        console.log("selectedNode.parent", selectedNode.parent);
+        console.log("selectedNode.parent", Number(selectedNode.parent));
 
         // Find the parent node by ID in treeData
-        const parentNode = treeData.find((node) =>
-          selectedNode.parent
-            ? node.key === selectedNode.parent
-            : Number(node.key) == selectedNode.parentId
-        );
+        const parentId =
+          Number(selectedNode.parent) || Number(selectedNode.parentId);
+        const parentNode = findNodeById(treeData, parentId);
+
         console.log("parentNode", parentNode);
 
         // Edit mode: Populate form with selected node's data
@@ -70,17 +69,16 @@ const AddEditNode: React.FC<AddEditNodeProps> = ({
         });
       } else {
         // Add mode: Reset the form with default values
-        console.log("else....", selectedParentId, treeData);
-        const parentNode = treeData.find(
-          (node) => Number(node.key) == selectedParentId
-        );
-        console.log("parentNode", parentNode);
+        console.log("useEffect Add", selectedNodeId, treeData);
+        const selectedNodeForAdd = findNodeById(treeData, selectedNodeId);
+
+        console.log("useEffect Add selectedNode", selectedNode);
         setFormData({
           key: "",
           label: "",
           depth: 0,
           parent: "",
-          parentName: parentNode ? parentNode.label : "",
+          parentName: selectedNodeForAdd ? selectedNodeForAdd.label : "",
         });
       }
     }
@@ -94,9 +92,9 @@ const AddEditNode: React.FC<AddEditNodeProps> = ({
     }));
   };
 
-  const findNodeById = (data: Node[], id: string): Node | null => {
+  const findNodeById = (data: Node[], id: number): Node | null => {
     for (const node of data) {
-      if (node.key === id) {
+      if (Number(node.key) === id) {
         return {
           key: node.key,
           label: node.label,
@@ -117,28 +115,26 @@ const AddEditNode: React.FC<AddEditNodeProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    console.log(`handleSubmit  selectedNodeId: ${selectedNodeId}`);
+
     if (formData.label.trim() === "") return;
 
     // Find the parent node from treeData based on parentName
-    const parentNode =
-      treeData.find((node) => node.label === formData.parentName) ||
-      treeData.find((node) => node.key === selectedNode?.key);
-    if (!parentNode && formData.parentName !== "0") {
+  
+    // const parentNode = findNodeById(treeData, parentId);
+    const selectedNodeForAdd = findNodeById(treeData, selectedNodeId);
+    if (!selectedNodeForAdd) {
       alert("Parent node not found");
       return;
     }
 
     // Prepare new node data
     const newNode: Node = {
-      key: selectedNode ? selectedNode.key : formData.label,
+      key: selectedNodeForAdd ? selectedNodeForAdd.key : formData.label,
       label: formData.label,
-      depth: selectedNode
-        ? formData.depth
-        : parentNode
-        ? parentNode.depth + 1
-        : 0, // Depth is 0 if no parent exists
-      parent: parentNode ? parentNode.key : "", // Store Parent Node ID
-      children: selectedNode?.children || [],
+      depth: selectedNodeForAdd.depth + 1 ,
+      parent: selectedNodeForAdd ? selectedNodeForAdd.key : "", // Store Parent Node ID
+      children: selectedNodeForAdd?.children || [],
     };
 
     const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
@@ -146,13 +142,14 @@ const AddEditNode: React.FC<AddEditNodeProps> = ({
 
     // API URL for adding or editing a node
     let apiUrl = "";
-    let requestData = {
-      name: formData.label,
-    };
+    
 
     try {
       // If selectedNode exists, it means we are editing an existing node, so use PUT
       if (selectedNode) {
+        const requestData = {
+          name: formData.label,
+        };
         apiUrl = `${apiBaseUrl}/menu/${selectedNode.key}`;
         console.log("apiUrl", apiUrl);
         const response = await fetch(apiUrl, {
@@ -202,14 +199,20 @@ const AddEditNode: React.FC<AddEditNodeProps> = ({
 
         onSubmit(updatedNodeWithParent); // Update the tree with the new data
       } else {
+
+        const requestDataAdd = {
+           name: formData.label,
+          parentId : selectedNodeForAdd.key 
+        }
+        console.log(`handleSubmit  requestDataAdd: ${requestDataAdd} ${JSON.stringify(selectedNodeForAdd)}`);
         // If selectedNode doesn't exist, we are adding a new node, so use POST
-        apiUrl = `${apiBaseUrl}/menu`;
+        apiUrl = `${apiBaseUrl}/menu/add`;
         const response = await fetch(apiUrl, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(requestData),
+          body: JSON.stringify(requestDataAdd),
         });
 
         if (!response.ok) {
