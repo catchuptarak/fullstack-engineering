@@ -120,33 +120,25 @@ const AddEditNode: React.FC<AddEditNodeProps> = ({
     if (formData.label.trim() === "") return;
 
     // Find the parent node from treeData based on parentName
-  
-    // const parentNode = findNodeById(treeData, parentId);
-    const selectedNodeForAdd = findNodeById(treeData, selectedNodeId);
-    if (!selectedNodeForAdd) {
-      alert("Parent node not found");
-      return;
-    }
 
-    // Prepare new node data
-    const newNode: Node = {
-      key: selectedNodeForAdd ? selectedNodeForAdd.key : formData.label,
-      label: formData.label,
-      depth: selectedNodeForAdd.depth + 1 ,
-      parent: selectedNodeForAdd ? selectedNodeForAdd.key : "", // Store Parent Node ID
-      children: selectedNodeForAdd?.children || [],
-    };
+    // const parentNode = findNodeById(treeData, parentId);
 
     const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
     console.log("process.env", process.env);
 
     // API URL for adding or editing a node
     let apiUrl = "";
-    
 
     try {
       // If selectedNode exists, it means we are editing an existing node, so use PUT
       if (selectedNode) {
+        if (!selectedNode.key) {
+          alert("Parent node not found");
+          return;
+        }
+
+        // Prepare new node dat
+
         const requestData = {
           name: formData.label,
         };
@@ -199,12 +191,23 @@ const AddEditNode: React.FC<AddEditNodeProps> = ({
 
         onSubmit(updatedNodeWithParent); // Update the tree with the new data
       } else {
+        const selectedNodeForAdd = findNodeById(treeData, selectedNodeId);
+        if (!selectedNodeForAdd) {
+          alert("Parent node not found");
+          return;
+        }
+
+        // Prepare new node dat
 
         const requestDataAdd = {
-           name: formData.label,
-          parentId : selectedNodeForAdd.key 
-        }
-        console.log(`handleSubmit  requestDataAdd: ${requestDataAdd} ${JSON.stringify(selectedNodeForAdd)}`);
+          name: formData.label,
+          parentId: selectedNodeForAdd.key,
+        };
+        console.log(
+          `handleSubmit  requestDataAdd: ${requestDataAdd} ${JSON.stringify(
+            selectedNodeForAdd
+          )}`
+        );
         // If selectedNode doesn't exist, we are adding a new node, so use POST
         apiUrl = `${apiBaseUrl}/menu/add`;
         const response = await fetch(apiUrl, {
