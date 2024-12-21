@@ -17,6 +17,7 @@ interface AddEditNodeProps {
   onCancel: () => void; // Callback to cancel the form
   onDelete: (key: string) => void; // Callback to handle node deletion
   mode: string;
+  triggerKey: string | null; // New prop
 }
 
 const AddEditNode: React.FC<AddEditNodeProps> = ({
@@ -27,6 +28,7 @@ const AddEditNode: React.FC<AddEditNodeProps> = ({
   onCancel,
   onDelete,
   mode,
+  triggerKey
 }) => {
   console.log("AAddEditNode trigerred", selectedNode);
 
@@ -43,43 +45,48 @@ const AddEditNode: React.FC<AddEditNodeProps> = ({
     console.log("AddEditNode useEffect selectedNode ", selectedNode);
     console.log("selectedParentId", selectedParentId);
 
-    
+    if(triggerKey){
 
-    if (selectedNode) {
-      // Check if selectedNode.parent is valid
-      console.log("selectedNode.parent", selectedNode.parent);
-
-      // Find the parent node by ID in treeData
-      const parentNode = treeData.find((node) =>
-        selectedNode.parent
-          ? node.key === selectedNode.parent
-          : Number(node.key) == selectedNode.parentId
+      if (selectedNode) {
+        // Check if selectedNode.parent is valid
+        console.log("selectedNode.parent", selectedNode.parent);
+  
+        // Find the parent node by ID in treeData
+        const parentNode = treeData.find((node) =>
+          selectedNode.parent
+            ? node.key === selectedNode.parent
+            : Number(node.key) == selectedNode.parentId
+        );
+        console.log("parentNode", parentNode);
+  
+        // Edit mode: Populate form with selected node's data
+        setFormData({
+          key: selectedNode.key,
+          label: selectedNode.label,
+          depth: selectedNode.depth,
+          parent: selectedNode.parent,
+          parentName: parentNode ? parentNode.label : "", // Use parent's label or empty string if no parent
+        });
+      } else {
+        // Add mode: Reset the form with default values
+        console.log("else....", selectedParentId, treeData)
+        const parentNode = treeData.find((node) =>
+        Number(node.key) == selectedParentId
       );
       console.log("parentNode", parentNode);
+        setFormData({
+          key: "",
+          label: "",
+          depth: 0,
+          parent: "",
+          parentName: parentNode ? parentNode.label : "",
+        });
+      }
 
-      // Edit mode: Populate form with selected node's data
-      setFormData({
-        key: selectedNode.key,
-        label: selectedNode.label,
-        depth: selectedNode.depth,
-        parent: selectedNode.parent,
-        parentName: parentNode ? parentNode.label : "", // Use parent's label or empty string if no parent
-      });
-    } else {
-      // Add mode: Reset the form with default values
-      const parentNode = treeData.find((node) =>
-      Number(node.key) == selectedParentId
-    );
-    console.log("parentNode", parentNode);
-      setFormData({
-        key: "",
-        label: "",
-        depth: 0,
-        parent: "",
-        parentName: parentNode ? parentNode.label : "",
-      });
     }
-  }, [selectedNode, treeData]);
+
+   
+  }, [selectedNode, treeData, triggerKey]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -88,6 +95,27 @@ const AddEditNode: React.FC<AddEditNodeProps> = ({
       [name]: value,
     }));
   };
+
+  const findNodeById = (data: Node[], id: string): Node | null => {
+    for (const node of data) {
+      if (node.key === id) {
+        return {
+          key: node.key,
+          label: node.label,
+          depth: node.depth,
+          parent: node.parent,
+          parentId: node.parentId,
+          children: node.children,
+        };
+      }
+      if (node.children && node.children.length > 0) {
+        const result = findNodeById(node.children, id);
+        if (result) return result;
+      }
+    }
+    return null; // If no matching node is found
+  };
+  
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -144,15 +172,22 @@ const AddEditNode: React.FC<AddEditNodeProps> = ({
 
         const updatedNode = await response.json();
         alert("Node updated successfully");
+        console.log(`updatedNode successfully with updatedNode : ${JSON.stringify(updatedNode)}`);
+        console.log(`updatedNode treeData : ${JSON.stringify(treeData)}`)
+
+        const updatedParentNode = findNodeById(treeData, updatedNode.parentId)
+
 
         // Ensure the updated node has the correct parent name
-        const updatedParentNode = treeData.find(
-          (node) => node.key === updatedNode.parent
-        );
+        // const updatedParentNode = treeData.find(
+        //   (node) => node.key === updatedNode.parent
+        // );
+        console.log(`updatedNode successfully with updatedParentNode : ${JSON.stringify(updatedParentNode)}`)
         const updatedNodeWithParent = {
           ...updatedNode,
           parentName: updatedParentNode ? updatedParentNode.label : "",
         };
+        console.log(`updatedNode successfully with updatedNodeWithParent : ${JSON.stringify(updatedNodeWithParent)}`)
 
         onSubmit(updatedNodeWithParent); // Update the tree with the new data
       } else {

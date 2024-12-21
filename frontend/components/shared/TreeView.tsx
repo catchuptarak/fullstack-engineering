@@ -18,8 +18,9 @@ const TreeView = () => {
   const [expandedKeys, setExpandedKeys] = useState<any>({});
   const [treeData, setTreeData] = useState<Node[]>([]);
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
-  const [selectedParentId, setSelectedParentId] = useState<string | null>(null); // New state for selected parent ID
+  const [selectedParentId, setSelectedParentId] = useState<string | null>(null);
   const [mode, setMode] = useState<"add" | "edit">("add");
+  const [triggerKey, setTriggerKey] = useState<string | null>(null); // New state for trigger key
 
   const fetchTreeData = async () => {
     try {
@@ -53,6 +54,7 @@ const TreeView = () => {
     setSelectedParentId(node.key); // Set the selected parent ID
     setSelectedNode(null); // Reset selected node to ensure no pre-selected node
     setMode("add"); // Set mode to 'add'
+    setTriggerKey(Date.now().toString()); // Update trigger key with a unique value
   };
 
   const handleEditNode = (node: Node) => {
@@ -60,10 +62,10 @@ const TreeView = () => {
     setSelectedParentId(null); // Reset selected parent ID since it's an edit operation
     setSelectedNode(node); // Set the selected node for editing
     setMode("edit"); // Set mode to 'edit'
+    setTriggerKey(Date.now().toString()); // Update trigger key with a unique value
   };
 
   const handleSubmitNode = (node: Node) => {
-    // Update the tree data with the new or edited node
     setTreeData((prev) => {
       if (selectedNode) {
         return prev.map((n) =>
@@ -80,12 +82,7 @@ const TreeView = () => {
       }
     });
 
-    // Reset the selected node and parent ID after submission
-    // setSelectedNode(null);
-    // setSelectedParentId(null);
-
-    // Fetch the updated tree data from the server after successful submission
-    fetchTreeData();
+    fetchTreeData(); // Refresh the tree data after adding or editing a node
   };
 
   const handleCancel = () => {
@@ -108,10 +105,7 @@ const TreeView = () => {
           nodeTemplate={(node) => (
             <div className="node-content relative group p-2 flex items-center justify-between">
               <span className="mr-2">{node.label}</span>
-
-              {/* Buttons container */}
               <div className="button-container flex items-center gap-4 ml-auto opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                {/* Plus button for adding node */}
                 <button
                   className="p-2 bg-blue-500 text-white rounded-full shadow-lg hover:bg-blue-600 transition"
                   onClick={(e) => {
@@ -121,8 +115,6 @@ const TreeView = () => {
                 >
                   <FaUserPlus />
                 </button>
-
-                {/* Edit button for modifying the current node */}
                 <button
                   className="p-2 bg-green-500 text-white rounded-full shadow-lg hover:bg-green-600 transition"
                   onClick={(e) => {
@@ -143,10 +135,11 @@ const TreeView = () => {
         <AddEditNode
           selectedNode={selectedNode}
           treeData={treeData}
-          selectedParentId={selectedParentId} // Pass selectedParentId to the form
+          selectedParentId={selectedParentId}
           onSubmit={handleSubmitNode}
           onCancel={handleCancel}
           mode={mode}
+          triggerKey={triggerKey} // Pass triggerKey to AddEditNode
         />
       </div>
     </div>
