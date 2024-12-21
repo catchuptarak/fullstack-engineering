@@ -18,7 +18,8 @@ const TreeView = () => {
   const [expandedKeys, setExpandedKeys] = useState<any>({});
   const [treeData, setTreeData] = useState<Node[]>([]);
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
-  const [mode, setMode] = useState<'add' | 'edit'>('add');
+  const [selectedParentId, setSelectedParentId] = useState<string | null>(null); // New state for selected parent ID
+  const [mode, setMode] = useState<"add" | "edit">("add");
 
   const fetchTreeData = async () => {
     try {
@@ -45,24 +46,20 @@ const TreeView = () => {
     fetchTreeData();
   }, []);
 
-  
-
   const onToggle = (e: any) => setExpandedKeys(e.value);
 
   const handleAddItem = (node: Node) => {
     console.log("Adding new node to:", node);
+    setSelectedParentId(node.key); // Set the selected parent ID
     setSelectedNode(null); // Reset selected node to ensure no pre-selected node
-    //setMode('add'); // Set mode to 'add' for adding a new item
-    setTimeout(() => {
-        setMode('add'); // Set mode to 'add' after the delay
-      }, 1000); // Delay for 1 second (1000 milliseconds)
-    
+    setMode("add"); // Set mode to 'add'
   };
 
   const handleEditNode = (node: Node) => {
     console.log("Editing node:", node);
+    setSelectedParentId(null); // Reset selected parent ID since it's an edit operation
     setSelectedNode(node); // Set the selected node for editing
-    setMode('edit'); // Set mode to 'edit' for editing an existing node
+    setMode("edit"); // Set mode to 'edit'
   };
 
   const handleSubmitNode = (node: Node) => {
@@ -73,20 +70,28 @@ const TreeView = () => {
           n.key === selectedNode.key ? { ...n, ...node } : n
         );
       } else {
-        return [...prev, node];
+        return [
+          ...prev,
+          {
+            ...node,
+            parent: selectedParentId || "", // Attach selectedParentId for the new node
+          },
+        ];
       }
     });
-  
-    // Reset the selected node after submission
-    setSelectedNode(node);
-  
+
+    // Reset the selected node and parent ID after submission
+    // setSelectedNode(null);
+    // setSelectedParentId(null);
+
     // Fetch the updated tree data from the server after successful submission
-    fetchTreeData(); // Refresh the tree data after adding or editing a node
+    fetchTreeData();
   };
 
   const handleCancel = () => {
     setSelectedNode(null); // Close the form without changes
-    setMode('add'); // Reset mode to 'add' if the action is cancelled
+    setSelectedParentId(null); // Reset parent ID on cancel
+    setMode("add"); // Reset mode to 'add'
   };
 
   return (
@@ -135,23 +140,14 @@ const TreeView = () => {
 
       {/* Add/Edit Node Section */}
       <div className="add-edit-section w-1/3">
-        {selectedNode ? (
-          <AddEditNode
-            selectedNode={selectedNode} // Pass the selected node data for editing
-            treeData={treeData}
-            onSubmit={handleSubmitNode}
-            onCancel={handleCancel}
-            mode={mode}
-          />
-        ) : (
-          <AddEditNode
-            selectedNode={null} // Passing null for new node
-            treeData={treeData}
-            onSubmit={handleSubmitNode}
-            onCancel={handleCancel}
-            mode={mode}
-          />
-        )}
+        <AddEditNode
+          selectedNode={selectedNode}
+          treeData={treeData}
+          selectedParentId={selectedParentId} // Pass selectedParentId to the form
+          onSubmit={handleSubmitNode}
+          onCancel={handleCancel}
+          mode={mode}
+        />
       </div>
     </div>
   );

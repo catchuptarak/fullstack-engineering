@@ -11,7 +11,8 @@ interface Node {
 
 interface AddEditNodeProps {
   selectedNode: Node | null; // The node to edit, or null for adding a new node
-  treeData: Node[]; // Full tree data to look up the parent node by ID
+  treeData: Node[]; // Full tree data to look up the parent node by ID,
+  selectedParentId: number;
   onSubmit: (node: Node) => void; // Callback to handle submission
   onCancel: () => void; // Callback to cancel the form
   onDelete: (key: string) => void; // Callback to handle node deletion
@@ -21,12 +22,13 @@ interface AddEditNodeProps {
 const AddEditNode: React.FC<AddEditNodeProps> = ({
   selectedNode,
   treeData,
+  selectedParentId,
   onSubmit,
   onCancel,
   onDelete,
   mode,
 }) => {
-  console.log("AddEditNode selectedNode", selectedNode);
+  console.log("AAddEditNode trigerred", selectedNode);
 
   const [formData, setFormData] = useState({
     key: "",
@@ -37,8 +39,11 @@ const AddEditNode: React.FC<AddEditNodeProps> = ({
   });
 
   useEffect(() => {
-    console.log("AddEditNode useEffect selectedNode", selectedNode);
-    console.log("AddEditNode useEffect treeData", treeData);
+    console.log("useEffect");
+    console.log("AddEditNode useEffect selectedNode ", selectedNode);
+    console.log("selectedParentId", selectedParentId);
+
+    
 
     if (selectedNode) {
       // Check if selectedNode.parent is valid
@@ -62,12 +67,16 @@ const AddEditNode: React.FC<AddEditNodeProps> = ({
       });
     } else {
       // Add mode: Reset the form with default values
+      const parentNode = treeData.find((node) =>
+      Number(node.key) == selectedParentId
+    );
+    console.log("parentNode", parentNode);
       setFormData({
         key: "",
         label: "",
         depth: 0,
         parent: "",
-        parentName: "", // No parent node in add mode
+        parentName: parentNode ? parentNode.label : "",
       });
     }
   }, [selectedNode, treeData]);
