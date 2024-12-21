@@ -89,4 +89,8 @@
   .custom-tree .p-treenode:hover {
     background-color: #f1f5f9; /* Light gray background on hover */
   }
+
+  .add-edit-section{
+    padding-left: 30%;
+  }
   

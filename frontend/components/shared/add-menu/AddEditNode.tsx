@@ -14,6 +14,7 @@ interface AddEditNodeProps {
   treeData: Node[]; // Full tree data to look up the parent node by name
   onSubmit: (node: Node) => void; // Callback to handle submission
   onCancel: () => void; // Callback to cancel the form
+  onDelete: (key: string) => void; // Callback to handle node deletion
 }
 
 const AddEditNode: React.FC<AddEditNodeProps> = ({
@@ -21,6 +22,7 @@ const AddEditNode: React.FC<AddEditNodeProps> = ({
   treeData,
   onSubmit,
   onCancel,
+  onDelete,
 }) => {
   const [formData, setFormData] = useState({
     key: selectedNode ? selectedNode.key : "",
@@ -70,14 +72,20 @@ const AddEditNode: React.FC<AddEditNodeProps> = ({
     setFormData({ key: "", label: "", depth: 0, parent: "" });
   };
 
+  const handleDelete = () => {
+    if (selectedNode) {
+      onDelete(selectedNode.key); // Trigger delete callback with node key
+    }
+  };
+
   return (
-    <div className="p-4 bg-white rounded-md shadow-md mt-4">
-      <h2 className="text-lg font-semibold mb-4">
+    <div className="p-6 bg-white rounded-md shadow-md mt-4 w-96 mx-auto">
+      <h2 className="text-xl font-semibold mb-6">
         {selectedNode ? "Edit Node" : "Add Node"}
       </h2>
       <form onSubmit={handleSubmit}>
-        <div className="mb-4">
-          <label htmlFor="key" className="block text-gray-700 mb-1">
+        <div className="mb-6">
+          <label htmlFor="key" className="block text-gray-700 text-lg mb-2">
             Node ID
           </label>
           <input
@@ -86,13 +94,13 @@ const AddEditNode: React.FC<AddEditNodeProps> = ({
             name="key"
             value={formData.key}
             onChange={handleChange}
-            className="w-full p-2 border border-gray-300 rounded"
+            className="w-full p-3 border border-gray-300 rounded text-lg"
             required
           />
         </div>
 
-        <div className="mb-4">
-          <label htmlFor="label" className="block text-gray-700 mb-1">
+        <div className="mb-6">
+          <label htmlFor="label" className="block text-gray-700 text-lg mb-2">
             Node Label
           </label>
           <input
@@ -101,13 +109,13 @@ const AddEditNode: React.FC<AddEditNodeProps> = ({
             name="label"
             value={formData.label}
             onChange={handleChange}
-            className="w-full p-2 border border-gray-300 rounded"
+            className="w-full p-3 border border-gray-300 rounded text-lg"
             required
           />
         </div>
 
-        <div className="mb-4">
-          <label htmlFor="depth" className="block text-gray-700 mb-1">
+        <div className="mb-6">
+          <label htmlFor="depth" className="block text-gray-700 text-lg mb-2">
             Depth
           </label>
           <input
@@ -116,13 +124,13 @@ const AddEditNode: React.FC<AddEditNodeProps> = ({
             name="depth"
             value={formData.depth}
             onChange={handleChange}
-            className="w-full p-2 border border-gray-300 rounded"
+            className="w-full p-3 border border-gray-300 rounded text-lg"
             required
           />
         </div>
 
-        <div className="mb-4">
-          <label htmlFor="parent" className="block text-gray-700 mb-1">
+        <div className="mb-6">
+          <label htmlFor="parent" className="block text-gray-700 text-lg mb-2">
             Parent Node Name
           </label>
           <input
@@ -131,21 +139,31 @@ const AddEditNode: React.FC<AddEditNodeProps> = ({
             name="parent"
             value={formData.parent}
             onChange={handleChange}
-            className="w-full p-2 border border-gray-300 rounded"
+            className="w-full p-3 border border-gray-300 rounded text-lg"
           />
         </div>
 
         <div className="flex justify-between">
-          <button type="submit" className="bg-blue-500 text-white p-2 rounded">
+          <button type="submit" className="bg-blue-500 text-white p-3 rounded text-lg">
             {selectedNode ? "Update" : "Add"}
           </button>
           <button
             type="button"
             onClick={onCancel}
-            className="bg-gray-500 text-white p-2 rounded"
+            className="bg-gray-500 text-white p-3 rounded text-lg"
           >
             Cancel
           </button>
+
+          {selectedNode && (
+            <button
+              type="button"
+              onClick={handleDelete}
+              className="bg-red-500 text-white p-3 rounded text-lg ml-4"
+            >
+              Delete
+            </button>
+          )}
         </div>
       </form>
     </div>

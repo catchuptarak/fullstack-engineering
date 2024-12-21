@@ -89,20 +89,21 @@ const TreeView = () => {
               <span className="mr-2">{node.label}</span>
 
               {/* Plus button for adding node */}
-              <div className="add-button absolute right-2 top-1/2 transform -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                <button
-                  className="p-2 bg-blue-500 text-white rounded-full shadow-lg hover:bg-blue-600 transition"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleAddItem(node); // Handle adding items
-                  }}
-                >
-                  <FaUserPlus />
-                </button>
-              </div>
+              <div className="add-button absolute left-0 top-1/2 transform -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+  <button
+    className="p-2 bg-blue-500 text-white rounded-full shadow-lg hover:bg-blue-600 transition"
+    onClick={(e) => {
+      e.stopPropagation();
+      handleAddItem(node); // Handle adding items
+    }}
+  >
+    <FaUserPlus />
+  </button>
+</div>
+
 
               {/* Edit button for modifying the current node */}
-              <div className="edit-button absolute right-12 top-1/2 transform -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+              <div className="edit-button absolute right-20 top-1/2 transform -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                 <button
                   className="p-2 bg-green-500 text-white rounded-full shadow-lg hover:bg-green-600 transition"
                   onClick={(e) => {
