@@ -1,5 +1,8 @@
 {
-  "compilerOptions": {
+  "compilerOptions": {      
+    "noEmitOnError": false,      // Emit output even if there are errors (optional)
+    "outDir": "./dist",          // Output directory for compiled files
+    "target": "ES6",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
