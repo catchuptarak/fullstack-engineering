@@ -1,26 +1,24 @@
-import FilterBar from "@/components/shared/FilterBar";
-import SearchEmployee from "@/components/shared/SearchEmployee";
-import EmployeeTable from "@/components/tables/EmployeeTable";
-import { fetchEmployees } from "@/lib/actions/employee.actions";
+"use client";
 
-const Page = async ({
-  searchParams,
-}: {
-  searchParams?: {
-    query?: string;
-    sort?: boolean;
-  };
-}) => {
-  const query = searchParams?.query || "";
-  const sort = searchParams?.sort || false;
+import React from 'react';
+import { useRouter } from 'next/navigation'; // Import from next/navigation instead of next/router
+
+const Page = () => {
+  const router = useRouter(); // Use the useRouter hook from next/navigation
 
   return (
-    <section>
-      <h1 className="text-head">Employees</h1>
-      <SearchEmployee />
-      <FilterBar />
-      <EmployeeTable query={query} sort={sort} />
-    </section>
+    <div className="flex flex-col items-center justify-center h-screen bg-gray-100 text-gray-800">
+      <h1 className="text-4xl font-bold text-center mb-6">Systems Page</h1>
+      <p className="text-lg mb-8 text-center">
+        Click the button below to configure your menus and manage settings.
+      </p>
+      <button
+        onClick={() => router.push('systems/menus')}
+        className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-lg hover:bg-blue-700 transition duration-300"
+      >
+        Go to Menu Configurations
+      </button>
+    </div>
   );
 };
 

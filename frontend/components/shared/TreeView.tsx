@@ -24,7 +24,9 @@ const TreeView = () => {
 
   const fetchTreeData = async () => {
     try {
-      const response = await fetch("http://localhost:4000/menu/all");
+        const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+        
+      const response = await fetch(`${apiBaseUrl}/menu/all`);
       if (!response.ok) throw new Error("Failed to fetch tree data");
 
       const data = await response.json();

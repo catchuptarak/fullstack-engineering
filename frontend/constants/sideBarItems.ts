@@ -27,9 +27,9 @@ const sideBarItems = [
     Icon: TiUser,
     submenu: [
       { title: "System Code", route: "/systems/code" },
-      { title: "Properties", route: "/systems/Properties" },
+      { title: "Properties", route: "/systems/properties" },
       { title: "Menus", route: "/systems/menus" },
-      { title: "API List", route: "/systems/apilist" },
+      { title: "API List", route: "/systems/api-list" },
     ],
   },
   {

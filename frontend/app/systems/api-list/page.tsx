@@ -8,7 +8,7 @@ const Page = () => {
 
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-gray-100 text-gray-800">
-      <h1 className="text-4xl font-bold text-center mb-6">System Code</h1>
+      <h1 className="text-4xl font-bold text-center mb-6">Properties</h1>
       <p className="text-lg mb-8 text-center">
         Click the button below to configure your menus and manage settings.
       </p>

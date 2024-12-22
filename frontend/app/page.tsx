@@ -1,41 +1,55 @@
-import { fetchEmployees } from "@/lib/actions/employee.actions";
-
 export default async function Home() {
-  const employeesData = await fetchEmployees();
+  const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-  const avgSalary = Math.trunc(
-    employeesData.reduce(
-      (accumulator, currentValue) => accumulator + +currentValue.salary,
-      0
-    ) / employeesData.length
+  const fetchMenus = async () => {
+    const response = await fetch(`${apiBaseUrl}/menu`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch menu data");
+    }
+
+    return response.json();
+  };
+
+  const menusData = await fetchMenus();
+
+  const totalMenus = menusData.length;
+
+  const avgDepth = Math.trunc(
+    menusData.reduce((acc, menu) => acc + (menu.depth || 0), 0) / totalMenus
   );
 
-  const highestSalary =
-    employeesData.length > 0
-      ? Math.max(...employeesData.map((employee) => +employee.salary))
+  const deepestMenu =
+    menusData.length > 0
+      ? Math.max(...menusData.map((menu) => menu.depth || 0))
       : 0;
 
   return (
     <section>
-      <h1 className="text-head">Insights</h1>
+      <h1 className="text-head">Menu Insights</h1>
       <div className="join join-vertical lg:join-horizontal shadow-md w-full">
         <div className="join-item p-10">
           <p className="text-6xl max-sm:text-4xl font-black text-secondary text-center">
-            {employeesData.length}
+            {totalMenus}
           </p>
-          <p className="text-center opacity-80">Total Employees</p>
+          <p className="text-center opacity-80">Total Menus</p>
         </div>
         <div className="join-item p-10">
           <p className="text-6xl max-sm:text-4xl font-black text-accent text-center">
-            {isNaN(avgSalary) ? 0 : avgSalary}
+            {isNaN(avgDepth) ? 0 : avgDepth}
           </p>
-          <p className="text-center opacity-80">Average Salary</p>
+          <p className="text-center opacity-80">Average Depth</p>
         </div>
         <div className="join-item p-10">
           <p className="text-6xl max-sm:text-4xl font-black text-secondary text-center">
-            {highestSalary}
+            {deepestMenu}
           </p>
-          <p className="text-center opacity-80">Highest Salery</p>
+          <p className="text-center opacity-80">Deepest Level</p>
         </div>
       </div>
     </section>
