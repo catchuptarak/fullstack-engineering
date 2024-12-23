@@ -1,29 +1,23 @@
-# Employee Dashboard
+# Menu Dashboard
 
-Welcome to the Employee Dashboard project! This application provides a dashboard interface for managing employee data. Users can perform various operations related to employees, such as adding, viewing, updating, and deleting employee records.
+Welcome to the Menu Dashboard project! 
 
-## Demo
 
-[Employee Dashboard Demo - Click Here](https://employee-dashboard-aa.vercel.app/)
-
-![Screenshot](https://i.ibb.co/qdJzZG5/Screenshot-16-3-2024-2410-employee-dashboard-aa-vercel-app.jpg)
 
 ## Technologies Used
 
-- **Next.js:** A React framework for building server-side rendered applications.
-- **MongoDB:** A NoSQL database for storing and managing employee data.
-- **Tailwind CSS**: Tailwind CSS is a CSS framework that simplifies web development by providing a set of pre-designed utility classes.
-- **DaisyUI:** DaisyUI simplifies Tailwind CSS development by providing customizable components.
+- **Next.js:** 
+- **Nest.js:** 
+- **Postgre:** 
+- **Tailwind CSS**: 
 
 ## Installation
 
 To set up the Employee Dashboard locally, follow these steps:
 
-1. Clone the repository: `git clone https://github.com/arshalabbas/employee-dashboard.git`
+1. Clone the repository: `https://github.com/catchuptarak/fullstack-engineering`
 2. Install dependencies: `npm install`
-3. Create a `.env.local` file in the root directory and add a variable named `MONGODB_URL`, assigning it your MongoDB URL.
-4. Start the development server: `npm run dev`
-5. Access the application in your web browser at `http://localhost:3000`
+3. 
 
 ---
 

@@ -1,19 +1,5 @@
-import { IconType } from "react-icons";
 import { FaUserPlus } from "react-icons/fa";
 import { TiHome, TiUser } from "react-icons/ti";
-
-interface SubMenuItemType {
-  title: string;
-  route: string;
-  // Icon: IconType;
-}
-
-interface sideBarItemType {
-  title: string;
-  route: string;
-  Icon: IconType;
-  submenu?: SubMenuItemType[];
-}
 
 const sideBarItems = [
   {
@@ -43,6 +29,5 @@ const sideBarItems = [
     Icon: FaUserPlus,
   },
 ];
-
 
 export default sideBarItems;
