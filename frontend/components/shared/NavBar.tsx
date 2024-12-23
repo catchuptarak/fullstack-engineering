@@ -34,7 +34,7 @@ const NavBar = () => {
             </label>
           </div>
           <div className="flex-1 px-2 mx-2 font-semibold text-lg">
-            Employee Dashboard
+             Dashboard
           </div>
         </div>
       </div>

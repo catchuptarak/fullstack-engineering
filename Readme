@@ -13,7 +13,7 @@ Welcome to the Menu Dashboard project!
 
 ## Installation
 
-To set up the Employee Dashboard locally, follow these steps:
+To set up the  Dashboard locally, follow these steps:
 
 1. Clone the repository: `https://github.com/catchuptarak/fullstack-engineering`
 2. Docker compose: `sudo docker-compose up --build                                        `
